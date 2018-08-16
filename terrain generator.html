@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript" src="source/TerrainMap.js"></script>
+    <script type="text/javascript" src="source/TerrainMapDisplayWrapper.js"></script>
+    <script type="text/javascript" src="source/terrain generator.js"></script>
+</head>
+<!-- optimised for average screen size of 1366x768 -->
+<body>
+    <div id=controlPanel>
+        Terrain Filter:
+        <select id="terrainFilterSelector">
+            <option>None</option>
+        </select>
+        Sky Filter:
+        <select id="skyFilterSelector">
+            <option>None</option>
+        </select>
+        <button id="generateMap" onclick="generateMaps();">
+            Generate Map    
+        </button>
+        <button id="runFilter" onclick="runFilter();">
+            Run Weather
+        </button>
+        <button id="floodTime" onclick="runFloodTime();">
+            Flood
+        </button>
+    </div>
+    
+    <div id="container">
+        <canvas id="primaryPanel" width="1026" height="513"></canvas>
+    </div>
+
+    <script>
+        init();
+    </script>
+</body>
+</html>
