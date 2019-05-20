@@ -6,6 +6,8 @@ let maxDrops=20;
 
 let snowLevel=[];
 
+let yellowSnow=false;
+
 function setup() {
   createCanvas(500,500);
 
@@ -23,8 +25,27 @@ function setup() {
   }
 }
 
+function mousePressed()
+{
+  if (yellowSnow==false)
+  {
+    yellowSnow=true;
+  }
+  else {
+    yellowSnow=false;
+  }
+}
+
 function draw() {
     background(255);
+
+    let c = color(255, 204, 0)
+
+    if (yellowSnow==true)
+    {
+      fill(c);
+      stroke(c);
+    }
     ellipse(mouseX,mouseY,10,10);
 
     let a=0;
