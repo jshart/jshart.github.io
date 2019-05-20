@@ -37,7 +37,8 @@ function mousePressed()
 }
 
 function draw() {
-    background(255);
+    background(0);
+    stroke(255);
 
     let c = color(255, 204, 0)
 
@@ -48,7 +49,7 @@ function draw() {
     }
     else {
       noFill();
-      stroke(0);
+      stroke(255);
     }
     ellipse(mouseX,mouseY,10,10);
 
@@ -61,15 +62,17 @@ function draw() {
       if (snowY[a]>(height-snowLevel[snowX[a]]))
       //if (snowY[a]>(height))
       {
-        snowLevel[snowX[a]]+=2;
+        snowLevel[snowX[a]]+=3;
 
-        if (snowX[a]>0)
+        if (snowX[a]>1)
         {
-          snowLevel[snowX[a]-1]++;
+          snowLevel[snowX[a]-1]+=2;
+          snowLevel[snowX[a]-2]++;
         }
-        if (snowX[a]<width)
+        if (snowX[a]<width-1)
         {
-          snowLevel[snowX[a]+1]++;
+          snowLevel[snowX[a]+1]+=2;
+          snowLevel[snowX[a]+2]++;
         }
 
         snowY[a]=0;
