@@ -46,6 +46,10 @@ function draw() {
       fill(c);
       stroke(c);
     }
+    else {
+      noFill();
+      stroke(0);
+    }
     ellipse(mouseX,mouseY,10,10);
 
     let a=0;
