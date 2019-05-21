@@ -53,33 +53,71 @@ function draw() {
     }
     ellipse(mouseX,mouseY,10,10);
 
+    //let xdelta = floor((mouseX - (width/2))/10);
+
     let a=0;
+    let resetSnow=false;
+    let ydelta = 0;
+    let xdelta = 0;
+    let delta = 0;
     for (a=0;a<maxDrops;a++)
     {
-      ellipse(snowX[a],snowY[a],5,5);
+      resetSnow=false;
+
+      // calculate the linear distance between each snowflake and the mouse
+      xdelta = mouseX -snowX[a];
+      ydelta = mouseY -snowY[a];
+      delta = sqrt((xdelta*xdelta)+(ydelta*ydelta));
+      delta=floor((500-delta)/100);
+
+      // Move the snow
       snowY[a]+=snowSpeed[a];
+      snowX[a]+=(mouseX>(snowX[a]))?-delta:delta;
 
-      if (snowY[a]>(height-snowLevel[snowX[a]]))
-      //if (snowY[a]>(height))
+      // snow is off screen set to reset
+      if (snowX[a]<0 || snowX[a]>width)
       {
-        snowLevel[snowX[a]]+=3;
+        resetSnow=true;
+      }
+      else
+      {
+        // attempt to draw the snow
+        ellipse(snowX[a],snowY[a],5,5);
 
-        if (snowX[a]>1)
+        // If the snow hits the pile at the bottom
+        // then add snow to the pile
+        if (snowY[a]>(height-snowLevel[snowX[a]]))
+        //if (snowY[a]>(height))
         {
-          snowLevel[snowX[a]-1]+=2;
-          snowLevel[snowX[a]-2]++;
-        }
-        if (snowX[a]<width-1)
-        {
-          snowLevel[snowX[a]+1]+=2;
-          snowLevel[snowX[a]+2]++;
-        }
+          snowLevel[snowX[a]]+=3;
 
+          if (snowX[a]>1)
+          {
+            snowLevel[snowX[a]-1]+=2;
+            snowLevel[snowX[a]-2]++;
+          }
+          if (snowX[a]<width-1)
+          {
+            snowLevel[snowX[a]+1]+=2;
+            snowLevel[snowX[a]+2]++;
+          }
+
+          resetSnow=true;
+        }
+      }
+
+      // if this snowflake is finished width
+      // reuse it by repositioning it at a
+      // random location at the top of the screen.
+      if (resetSnow==true)
+      {
+        //console.log("resetSnow:"+snowX[a]+","+snowY[a]);
         snowY[a]=0;
         snowX[a]=floor(random(0,width));
       }
     }
 
+    // draw all the snow at the bottom
     for (a=0;a<width;a++)
     {
       line(a,height-snowLevel[a],a,height);
