@@ -5,11 +5,12 @@ let snowLevel=[];
 let yellowSnow=false;
 
 class Snowflake {
-  constructor(xp,yp,sp)
+  constructor(xp,yp,sp,sz)
   {
     this.x=xp;
     this.y=yp;
     this.speed=sp;
+    this.size=sz
   }
 }
 
@@ -21,7 +22,7 @@ function setup() {
   let a=0;
   for (a=0;a<maxDrops;a++)
   {
-    snowFlakes[a]= new Snowflake(floor(random(0,width)),0,random(1,3));
+    snowFlakes[a]= new Snowflake(floor(random(0,width)),0,random(1,3),random(1,7));
   }
 
   for (a=0;a<width;a++)
@@ -61,19 +62,23 @@ function draw() {
     //let xdelta = floor((mouseX - (width/2))/10);
 
     let a=0;
-    let resetSnow=false;
+    let resetFlake=false;
     let ydelta = 0;
     let xdelta = 0;
     let delta = 0;
     for (a=0;a<maxDrops;a++)
     {
-      resetSnow=false;
+      resetFlake=false;
 
       // calculate the linear distance between each snowflake and the mouse
       xdelta = mouseX-snowFlakes[a].x;
       ydelta = mouseY-snowFlakes[a].y;
       delta = sqrt((xdelta*xdelta)+(ydelta*ydelta));
-      delta=floor((500-delta)/100);
+
+      // TODO 500 is approx max distance, need to actually calculate this in setup()
+      // 200 is a magic number - this scales the "wind" force, maybe make this adjustable
+      // somehow
+      delta=floor((500-delta)/200);
 
       // Move the snow
       snowFlakes[a].y+=snowFlakes[a].speed;
@@ -82,17 +87,16 @@ function draw() {
       // snow is off screen set to reset
       if (snowFlakes[a].x<0 || snowFlakes[a].x>width)
       {
-        resetSnow=true;
+        resetFlake=true;
       }
       else
       {
         // attempt to draw the snow
-        ellipse(snowFlakes[a].x,snowFlakes[a].y,5,5);
+        ellipse(snowFlakes[a].x,snowFlakes[a].y,snowFlakes[a].size,snowFlakes[a].size);
 
         // If the snow hits the pile at the bottom
         // then add snow to the pile
         if (snowFlakes[a].y>(height-snowLevel[snowFlakes[a].x]))
-        //if (snowY[a]>(height))
         {
           snowLevel[snowFlakes[a].x]+=3;
 
@@ -107,16 +111,16 @@ function draw() {
             snowLevel[snowFlakes[a].x+2]++;
           }
 
-          resetSnow=true;
+          resetFlake=true;
         }
       }
 
       // if this snowflake is finished width
       // reuse it by repositioning it at a
       // random location at the top of the screen.
-      if (resetSnow==true)
+      if (resetFlake==true)
       {
-        //console.log("resetSnow:"+snowX[a]+","+snowY[a]);
+        //console.log("resetFlake:"+snowX[a]+","+snowY[a]);
         snowFlakes[a].y=0;
         snowFlakes[a].x=floor(random(0,width));
       }
