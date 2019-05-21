@@ -1,12 +1,19 @@
-let snowX=[];
-let snowY=[];
-let snowSpeed=[];
-
 let maxDrops=20;
 
 let snowLevel=[];
 
 let yellowSnow=false;
+
+class Snowflake {
+  constructor(xp,yp,sp)
+  {
+    this.x=xp;
+    this.y=yp;
+    this.speed=sp;
+  }
+}
+
+let snowFlakes=[];
 
 function setup() {
   createCanvas(500,500);
@@ -14,9 +21,7 @@ function setup() {
   let a=0;
   for (a=0;a<maxDrops;a++)
   {
-    snowX[a]=floor(random(0,width));
-    snowY[a]=0;
-    snowSpeed[a]=random(1,3);
+    snowFlakes[a]= new Snowflake(floor(random(0,width)),0,random(1,3));
   }
 
   for (a=0;a<width;a++)
@@ -65,41 +70,41 @@ function draw() {
       resetSnow=false;
 
       // calculate the linear distance between each snowflake and the mouse
-      xdelta = mouseX -snowX[a];
-      ydelta = mouseY -snowY[a];
+      xdelta = mouseX-snowFlakes[a].x;
+      ydelta = mouseY-snowFlakes[a].y;
       delta = sqrt((xdelta*xdelta)+(ydelta*ydelta));
       delta=floor((500-delta)/100);
 
       // Move the snow
-      snowY[a]+=snowSpeed[a];
-      snowX[a]+=(mouseX>(snowX[a]))?-delta:delta;
+      snowFlakes[a].y+=snowFlakes[a].speed;
+      snowFlakes[a].x+=(mouseX>(snowFlakes[a].x))?-delta:delta;
 
       // snow is off screen set to reset
-      if (snowX[a]<0 || snowX[a]>width)
+      if (snowFlakes[a].x<0 || snowFlakes[a].x>width)
       {
         resetSnow=true;
       }
       else
       {
         // attempt to draw the snow
-        ellipse(snowX[a],snowY[a],5,5);
+        ellipse(snowFlakes[a].x,snowFlakes[a].y,5,5);
 
         // If the snow hits the pile at the bottom
         // then add snow to the pile
-        if (snowY[a]>(height-snowLevel[snowX[a]]))
+        if (snowFlakes[a].y>(height-snowLevel[snowFlakes[a].x]))
         //if (snowY[a]>(height))
         {
-          snowLevel[snowX[a]]+=3;
+          snowLevel[snowFlakes[a].x]+=3;
 
-          if (snowX[a]>1)
+          if (snowFlakes[a].x>1)
           {
-            snowLevel[snowX[a]-1]+=2;
-            snowLevel[snowX[a]-2]++;
+            snowLevel[snowFlakes[a].x-1]+=2;
+            snowLevel[snowFlakes[a].x-2]++;
           }
-          if (snowX[a]<width-1)
+          if (snowFlakes[a].x<width-1)
           {
-            snowLevel[snowX[a]+1]+=2;
-            snowLevel[snowX[a]+2]++;
+            snowLevel[snowFlakes[a].x+1]+=2;
+            snowLevel[snowFlakes[a].x+2]++;
           }
 
           resetSnow=true;
@@ -112,8 +117,8 @@ function draw() {
       if (resetSnow==true)
       {
         //console.log("resetSnow:"+snowX[a]+","+snowY[a]);
-        snowY[a]=0;
-        snowX[a]=floor(random(0,width));
+        snowFlakes[a].y=0;
+        snowFlakes[a].x=floor(random(0,width));
       }
     }
 
