@@ -44,6 +44,34 @@ class SnowLevel {
     }
   }
 
+  driftSnow(mx,x)
+  {
+    if (mx > x)
+    {
+      // push snow to the left
+      if (x>0)
+      {
+        if (this.snowLevels[x] > this.snowLevels[x-1]+5)
+        {
+          this.snowLevels[x]--;
+          this.snowLevels[x-1]++;
+        }
+      }
+    }
+    else
+    {
+      // push snow to the right
+      if (x<width)
+      {
+        if (this.snowLevels[x] > this.snowLevels[x+1]+5)
+        {
+          this.snowLevels[x]--;
+          this.snowLevels[x+1]++;
+        }
+      }
+    }
+  }
+
   updatebuildingLevels(b)
   {
     let i=0;
@@ -191,6 +219,7 @@ function draw() {
     // draw all the snow at the bottom
     for (a=0;a<width;a++)
     {
+      snowLevel.driftSnow(mouseX,a);
       line(a,height-snowLevel.snowStartPoint(a),a,height-snowLevel.snowEndPoint(a));
     }
 }
