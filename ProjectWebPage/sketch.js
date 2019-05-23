@@ -1,5 +1,5 @@
 let maxSnowFlakes=20;
-let maxBuildings=10;
+let maxBuildings=15;
 
 class SnowLevel {
 
@@ -136,11 +136,14 @@ class Snowflake {
 let snowFlakes=[];
 let buildings=[];
 let snowLevel;
+let maxDist;
 
 function setup() {
   createCanvas(500,500);
 
   snowLevel = new SnowLevel(width);
+
+  maxDist = floor(sqrt((width*width) + (height*height)))
 
   let a=0;
   for (a=0;a<maxSnowFlakes;a++)
@@ -150,7 +153,7 @@ function setup() {
 
   for (a=0;a<maxBuildings;a++)
   {
-    buildings[a]= new Building(floor(random(0,width)),floor(random(10,50)),floor(random(10,50)));
+    buildings[a]= new Building(floor(random(0,width)),floor(random(10,80)),floor(random(10,80)));
     snowLevel.updatebuildingLevels(buildings[a]);
   }
 }
@@ -184,10 +187,9 @@ function draw() {
       ydelta = mouseY-snowFlakes[a].y;
       delta = sqrt((xdelta*xdelta)+(ydelta*ydelta));
 
-      // TODO 500 is approx max distance, need to actually calculate this in setup()
       // 200 is a magic number - this scales the "wind" force, maybe make this adjustable
       // somehow
-      delta=floor((500-delta)/200);
+      delta=floor((maxDist-delta)/200);
 
       // Move the snow
       snowFlakes[a].update((mouseX>(snowFlakes[a].x))?-delta:delta,snowFlakes[a].speed)
