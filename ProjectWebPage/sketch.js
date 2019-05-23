@@ -82,9 +82,12 @@ class SnowLevel {
   updatebuildingLevels(b)
   {
     let i=0;
+    let bi=0;
     for (i=0;i<b.width;i++)
     {
-      this.buildingLevels[b.x+i]=b.height;
+      bi = b.x+i;
+
+      this.buildingLevels[bi]=this.buildingLevels[bi]>b.height?this.buildingLevels[bi]:b.height;
     }
   }
 }
