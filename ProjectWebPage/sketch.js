@@ -46,12 +46,19 @@ class SnowLevel {
 
   driftSnow(mx,x)
   {
+    let dFactor=5;
+
+    if (this.snowLevels[x]<=dFactor)
+    {
+      return;
+    }
+
     if (mx > x)
     {
       // push snow to the left
       if (x>0)
       {
-        if (this.snowLevels[x] > this.snowLevels[x-1]+5)
+        if (this.snowStartPoint(x) > this.snowStartPoint(x-1)+dFactor)
         {
           this.snowLevels[x]--;
           this.snowLevels[x-1]++;
@@ -63,7 +70,7 @@ class SnowLevel {
       // push snow to the right
       if (x<width)
       {
-        if (this.snowLevels[x] > this.snowLevels[x+1]+5)
+        if (this.snowStartPoint(x) > this.snowStartPoint(x+1)+dFactor)
         {
           this.snowLevels[x]--;
           this.snowLevels[x+1]++;
