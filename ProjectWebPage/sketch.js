@@ -1,8 +1,44 @@
-let maxDrops=20;
+let maxSnowFlakes=20;
+let maxBuildings=10;
 
 let snowLevel=[];
 
-let yellowSnow=false;
+class SnowLevel {
+  constructor(w)
+  {
+    let snowLevel=[];
+    let buildingLevel=[];
+
+    for (a=0;a<w;a++)
+    {
+      snowLevel[a]=0;
+      buildingLevel[a]=0;
+    }
+  }
+
+  updateBuildingLevel(b)
+  {
+    let i=0;
+    for (i=0;i<b.width;i++)
+    {
+      buildingLevel[b.x+i]=b.h;
+    }
+  }
+}
+
+class Building {
+  constructor(xpos, w, h)
+  {
+    this.x=xpos;
+    this.width = w;
+    this.height = h;
+  }
+
+  draw()
+  {
+    rect(this.x,height-this.height,this.width,this.height)
+  }
+}
 
 class Snowflake {
   constructor(xp,yp,sp,sz)
@@ -12,15 +48,33 @@ class Snowflake {
     this.speed=sp;
     this.size=sz
   }
+
+  update(xd,yd)
+  {
+    this.x+=xd;
+    this.y+=yd;
+  }
+
+  reboot()
+  {
+    this.y=0;
+    this.x=floor(random(0,width));
+  }
+
+  draw()
+  {
+    ellipse(this.x,this.y,this.size,this.size);
+  }
 }
 
 let snowFlakes=[];
+let buildings=[];
 
 function setup() {
   createCanvas(500,500);
 
   let a=0;
-  for (a=0;a<maxDrops;a++)
+  for (a=0;a<maxSnowFlakes;a++)
   {
     snowFlakes[a]= new Snowflake(floor(random(0,width)),0,random(1,3),random(1,7));
   }
@@ -29,34 +83,23 @@ function setup() {
   {
     snowLevel[a]=0;
   }
+
+  for (a=0;a<maxBuildings;a++)
+  {
+    buildings[a]= new Building(floor(random(0,width)),floor(random(10,50)),floor(random(10,50)));
+  }
 }
 
 function mousePressed()
 {
-  if (yellowSnow==false)
-  {
-    yellowSnow=true;
-  }
-  else {
-    yellowSnow=false;
-  }
+
 }
 
 function draw() {
     background(0);
     stroke(255);
+    noFill();
 
-    let c = color(255, 204, 0)
-
-    if (yellowSnow==true)
-    {
-      fill(c);
-      stroke(c);
-    }
-    else {
-      noFill();
-      stroke(255);
-    }
     ellipse(mouseX,mouseY,10,10);
 
     //let xdelta = floor((mouseX - (width/2))/10);
@@ -66,7 +109,8 @@ function draw() {
     let ydelta = 0;
     let xdelta = 0;
     let delta = 0;
-    for (a=0;a<maxDrops;a++)
+
+    for (a=0;a<snowFlakes.length;a++)
     {
       resetFlake=false;
 
@@ -81,8 +125,7 @@ function draw() {
       delta=floor((500-delta)/200);
 
       // Move the snow
-      snowFlakes[a].y+=snowFlakes[a].speed;
-      snowFlakes[a].x+=(mouseX>(snowFlakes[a].x))?-delta:delta;
+      snowFlakes[a].update((mouseX>(snowFlakes[a].x))?-delta:delta,snowFlakes[a].speed)
 
       // snow is off screen set to reset
       if (snowFlakes[a].x<0 || snowFlakes[a].x>width)
@@ -92,7 +135,7 @@ function draw() {
       else
       {
         // attempt to draw the snow
-        ellipse(snowFlakes[a].x,snowFlakes[a].y,snowFlakes[a].size,snowFlakes[a].size);
+        snowFlakes[a].draw();
 
         // If the snow hits the pile at the bottom
         // then add snow to the pile
@@ -121,9 +164,13 @@ function draw() {
       if (resetFlake==true)
       {
         //console.log("resetFlake:"+snowX[a]+","+snowY[a]);
-        snowFlakes[a].y=0;
-        snowFlakes[a].x=floor(random(0,width));
+        snowFlakes[a].reboot()
       }
+    }
+
+    for (a=0;a<buildings.length;a++)
+    {
+      buildings[a].draw();
     }
 
     // draw all the snow at the bottom
@@ -131,4 +178,5 @@ function draw() {
     {
       line(a,height-snowLevel[a],a,height);
     }
+
 }
