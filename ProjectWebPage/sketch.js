@@ -1,27 +1,55 @@
 let maxSnowFlakes=20;
 let maxBuildings=10;
 
-let snowLevel=[];
-
 class SnowLevel {
+
   constructor(w)
   {
-    let snowLevel=[];
-    let buildingLevel=[];
+    this.snowLevels=[];
+    this.buildingLevels=[];
 
+    let a=0;
     for (a=0;a<w;a++)
     {
-      snowLevel[a]=0;
-      buildingLevel[a]=0;
+      this.snowLevels[a]=0;
+      this.buildingLevels[a]=0;
     }
   }
 
-  updateBuildingLevel(b)
+  snowStartPoint(i)
+  {
+    return(this.buildingLevels[i]+this.snowLevels[i]);
+  }
+
+  snowEndPoint(i)
+  {
+    return(this.buildingLevels[i]);
+  }
+
+  addSnow(xpos,amount)
+  {
+    let i=0;
+    let a=amount;
+    for (i=xpos;i>=0 && a>=0;i--)
+    {
+      this.snowLevels[i]+=a;
+      a--;
+    }
+
+    a=amount-1;
+    for (i=xpos+1;i<width && a>=0;i++)
+    {
+      this.snowLevels[i]+=a;
+      a--;
+    }
+  }
+
+  updatebuildingLevels(b)
   {
     let i=0;
     for (i=0;i<b.width;i++)
     {
-      buildingLevel[b.x+i]=b.h;
+      this.buildingLevels[b.x+i]=b.height;
     }
   }
 }
@@ -69,9 +97,12 @@ class Snowflake {
 
 let snowFlakes=[];
 let buildings=[];
+let snowLevel;
 
 function setup() {
   createCanvas(500,500);
+
+  snowLevel = new SnowLevel(width);
 
   let a=0;
   for (a=0;a<maxSnowFlakes;a++)
@@ -79,14 +110,10 @@ function setup() {
     snowFlakes[a]= new Snowflake(floor(random(0,width)),0,random(1,3),random(1,7));
   }
 
-  for (a=0;a<width;a++)
-  {
-    snowLevel[a]=0;
-  }
-
   for (a=0;a<maxBuildings;a++)
   {
     buildings[a]= new Building(floor(random(0,width)),floor(random(10,50)),floor(random(10,50)));
+    snowLevel.updatebuildingLevels(buildings[a]);
   }
 }
 
@@ -139,21 +166,9 @@ function draw() {
 
         // If the snow hits the pile at the bottom
         // then add snow to the pile
-        if (snowFlakes[a].y>(height-snowLevel[snowFlakes[a].x]))
+        if (snowFlakes[a].y>(height-snowLevel.snowStartPoint(snowFlakes[a].x)))
         {
-          snowLevel[snowFlakes[a].x]+=3;
-
-          if (snowFlakes[a].x>1)
-          {
-            snowLevel[snowFlakes[a].x-1]+=2;
-            snowLevel[snowFlakes[a].x-2]++;
-          }
-          if (snowFlakes[a].x<width-1)
-          {
-            snowLevel[snowFlakes[a].x+1]+=2;
-            snowLevel[snowFlakes[a].x+2]++;
-          }
-
+          snowLevel.addSnow(floor(snowFlakes[a].x),floor(snowFlakes[a].size));
           resetFlake=true;
         }
       }
@@ -176,7 +191,6 @@ function draw() {
     // draw all the snow at the bottom
     for (a=0;a<width;a++)
     {
-      line(a,height-snowLevel[a],a,height);
+      line(a,height-snowLevel.snowStartPoint(a),a,height-snowLevel.snowEndPoint(a));
     }
-
 }
